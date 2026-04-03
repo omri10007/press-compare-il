@@ -120,27 +120,6 @@ if msg:  # non-empty warning
 # ---------------------------------------------------------------------------
 df = add_variance_columns(raw_df)
 
-# Apply filters
-if selected_departments:
-    df = df[df["department"].isin(selected_departments)]
-if selected_months:
-    df = df[df["month"].isin(selected_months)]
-
-# ---------------------------------------------------------------------------
-# Aggregations
-# ---------------------------------------------------------------------------
-dept_df = aggregate_by(df, "department")
-month_df = aggregate_by(df, "month")
-cat_df = aggregate_by(df, "category")
-top_adverse, top_favorable = top_variances(df, n=10)
-
-# ---------------------------------------------------------------------------
-# Commentary (computed once)
-# ---------------------------------------------------------------------------
-summary, actions_markdown = get_commentary(
-    df, top_adverse, top_favorable, commentary_mode, api_key
-)
-
 # ---------------------------------------------------------------------------
 # Dashboard
 # ---------------------------------------------------------------------------
@@ -149,61 +128,8 @@ st.markdown("*Where is the business over or under plan — and what should we do
 
 st.divider()
 
-# --- KPI cards ---------------------------------------------------------------
-total_budget = df["budget"].sum()
-total_actual = df["actual"].sum()
-net_variance = df["variance"].sum()
-net_variance_pct = net_variance / total_budget if total_budget != 0 else 0.0
-
-variance_modifier = "kpi-adverse" if net_variance > 0 else "kpi-favorable"
-variance_label = "Over budget" if net_variance > 0 else "Under budget"
-variance_color = "#d62728" if net_variance > 0 else "#2ca02c"
-
-col1, col2, col3, col4 = st.columns(4)
-
-col1.markdown(
-    f"""
-    <div class="kpi-card kpi-neutral">
-        <p class="kpi-label">Total Budget</p>
-        <p class="kpi-value">${total_budget:,.0f}</p>
-        <p class="kpi-sub">&nbsp;</p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-col2.markdown(
-    f"""
-    <div class="kpi-card kpi-neutral">
-        <p class="kpi-label">Total Actual</p>
-        <p class="kpi-value">${total_actual:,.0f}</p>
-        <p class="kpi-sub">&nbsp;</p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-col3.markdown(
-    f"""
-    <div class="kpi-card {variance_modifier}">
-        <p class="kpi-label">Net Variance ($)</p>
-        <p class="kpi-value" style="color:{variance_color};">${net_variance:+,.0f}</p>
-        <p class="kpi-sub" style="color:{variance_color};">{variance_label}</p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-col4.markdown(
-    f"""
-    <div class="kpi-card {variance_modifier}">
-        <p class="kpi-label">Net Variance (%)</p>
-        <p class="kpi-value" style="color:{variance_color};">{net_variance_pct:+.1%}</p>
-        <p class="kpi-sub" style="color:{variance_color};">{variance_label}</p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+# Placeholder — filled after filters are applied so KPIs reflect the selection
+kpi_container = st.container()
 
 # --- Inline filters ----------------------------------------------------------
 # The sentinel div is the CSS hook. The adjacent-sibling selector in styles.css
@@ -238,6 +164,84 @@ with st.container():
             )
         else:
             selected_months = all_months
+
+# Apply filters
+if selected_departments:
+    df = df[df["department"].isin(selected_departments)]
+if selected_months:
+    df = df[df["month"].isin(selected_months)]
+
+# --- KPI cards (populated into the placeholder created above) ----------------
+with kpi_container:
+    total_budget = df["budget"].sum()
+    total_actual = df["actual"].sum()
+    net_variance = df["variance"].sum()
+    net_variance_pct = net_variance / total_budget if total_budget != 0 else 0.0
+
+    variance_modifier = "kpi-adverse" if net_variance > 0 else "kpi-favorable"
+    variance_label = "Over budget" if net_variance > 0 else "Under budget"
+    variance_color = "#d62728" if net_variance > 0 else "#2ca02c"
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    col1.markdown(
+        f"""
+    <div class="kpi-card kpi-neutral">
+        <p class="kpi-label">Total Budget</p>
+        <p class="kpi-value">${total_budget:,.0f}</p>
+        <p class="kpi-sub">&nbsp;</p>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    col2.markdown(
+        f"""
+    <div class="kpi-card kpi-neutral">
+        <p class="kpi-label">Total Actual</p>
+        <p class="kpi-value">${total_actual:,.0f}</p>
+        <p class="kpi-sub">&nbsp;</p>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    col3.markdown(
+        f"""
+    <div class="kpi-card {variance_modifier}">
+        <p class="kpi-label">Net Variance ($)</p>
+        <p class="kpi-value" style="color:{variance_color};">${net_variance:+,.0f}</p>
+        <p class="kpi-sub" style="color:{variance_color};">{variance_label}</p>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    col4.markdown(
+        f"""
+    <div class="kpi-card {variance_modifier}">
+        <p class="kpi-label">Net Variance (%)</p>
+        <p class="kpi-value" style="color:{variance_color};">{net_variance_pct:+.1%}</p>
+        <p class="kpi-sub" style="color:{variance_color};">{variance_label}</p>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+# ---------------------------------------------------------------------------
+# Aggregations
+# ---------------------------------------------------------------------------
+dept_df = aggregate_by(df, "department")
+month_df = aggregate_by(df, "month")
+cat_df = aggregate_by(df, "category")
+top_adverse, top_favorable = top_variances(df, n=10)
+
+# ---------------------------------------------------------------------------
+# Commentary (computed once)
+# ---------------------------------------------------------------------------
+summary, actions_markdown = get_commentary(
+    df, top_adverse, top_favorable, commentary_mode, api_key
+)
 
 # --- Variance overview tabs --------------------------------------------------
 st.subheader("Variance Overview")
