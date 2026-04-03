@@ -120,30 +120,6 @@ if msg:  # non-empty warning
 # ---------------------------------------------------------------------------
 df = add_variance_columns(raw_df)
 
-# ---------------------------------------------------------------------------
-# Sidebar filters (shown after data loads)
-# ---------------------------------------------------------------------------
-with st.sidebar:
-    st.divider()
-    st.subheader("Filters")
-
-    all_departments = sorted(df["department"].unique().tolist())
-    selected_departments = st.multiselect(
-        "Departments",
-        options=all_departments,
-        default=all_departments,
-    )
-
-    all_months = sorted(df["month"].unique().tolist())
-    if len(all_months) > 1:
-        selected_months = st.multiselect(
-            "Months",
-            options=all_months,
-            default=all_months,
-        )
-    else:
-        selected_months = all_months
-
 # Apply filters
 if selected_departments:
     df = df[df["department"].isin(selected_departments)]
@@ -228,6 +204,40 @@ col4.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+# --- Inline filters ----------------------------------------------------------
+# The sentinel div is the CSS hook. The adjacent-sibling selector in styles.css
+# targets the stVerticalBlock that immediately follows it — which is the
+# st.container() below. All filter widgets must be inside that container.
+st.markdown('<div id="filter-bar-sentinel"></div>', unsafe_allow_html=True)
+
+all_departments = sorted(df["department"].unique().tolist())
+all_months = sorted(df["month"].unique().tolist())
+
+with st.container():
+    st.markdown(
+        "<p style='font-size:0.8rem;color:#6b7280;margin-bottom:0.25rem;'><b>Filters</b></p>",
+        unsafe_allow_html=True,
+    )
+
+    filter_col1, filter_col2 = st.columns(2)
+
+    with filter_col1:
+        selected_departments = st.multiselect(
+            "Departments",
+            options=all_departments,
+            default=all_departments,
+        )
+
+    with filter_col2:
+        if len(all_months) > 1:
+            selected_months = st.multiselect(
+                "Months",
+                options=all_months,
+                default=all_months,
+            )
+        else:
+            selected_months = all_months
 
 # --- Variance overview tabs --------------------------------------------------
 st.subheader("Variance Overview")
