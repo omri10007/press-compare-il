@@ -179,23 +179,40 @@ total_actual = df["actual"].sum()
 net_variance = df["variance"].sum()
 net_variance_pct = net_variance / total_budget if total_budget != 0 else 0.0
 
+variance_modifier = "kpi-adverse" if net_variance > 0 else "kpi-favorable"
+variance_label = "Over budget" if net_variance > 0 else "Under budget"
+variance_color = "#d62728" if net_variance > 0 else "#2ca02c"
+
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric("Total Budget", f"${total_budget:,.0f}")
-col2.metric("Total Actual", f"${total_actual:,.0f}")
+col1.markdown(
+    f"""
+    <div class="kpi-card kpi-neutral">
+        <p class="kpi-label">Total Budget</p>
+        <p class="kpi-value">${total_budget:,.0f}</p>
+        <p class="kpi-sub">&nbsp;</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
-# Variance direction: positive variance (over budget) = bad = red
-variance_color = "red" if net_variance > 0 else "green"
-variance_label = "Over budget" if net_variance > 0 else "Under budget"
+col2.markdown(
+    f"""
+    <div class="kpi-card kpi-neutral">
+        <p class="kpi-label">Total Actual</p>
+        <p class="kpi-value">${total_actual:,.0f}</p>
+        <p class="kpi-sub">&nbsp;</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 col3.markdown(
     f"""
-    <div style="padding: 0.5rem 0;">
-        <p style="color: #555; font-size: 0.85rem; margin-bottom: 0.15rem;">Net Variance ($)</p>
-        <p style="color: {variance_color}; font-size: 1.6rem; font-weight: 700; margin: 0;">
-            ${net_variance:+,.0f}
-        </p>
-        <p style="color: {variance_color}; font-size: 0.8rem; margin: 0;">{variance_label}</p>
+    <div class="kpi-card {variance_modifier}">
+        <p class="kpi-label">Net Variance ($)</p>
+        <p class="kpi-value" style="color:{variance_color};">${net_variance:+,.0f}</p>
+        <p class="kpi-sub" style="color:{variance_color};">{variance_label}</p>
     </div>
     """,
     unsafe_allow_html=True,
@@ -203,18 +220,14 @@ col3.markdown(
 
 col4.markdown(
     f"""
-    <div style="padding: 0.5rem 0;">
-        <p style="color: #555; font-size: 0.85rem; margin-bottom: 0.15rem;">Net Variance (%)</p>
-        <p style="color: {variance_color}; font-size: 1.6rem; font-weight: 700; margin: 0;">
-            {net_variance_pct:+.1%}
-        </p>
-        <p style="color: {variance_color}; font-size: 0.8rem; margin: 0;">{variance_label}</p>
+    <div class="kpi-card {variance_modifier}">
+        <p class="kpi-label">Net Variance (%)</p>
+        <p class="kpi-value" style="color:{variance_color};">{net_variance_pct:+.1%}</p>
+        <p class="kpi-sub" style="color:{variance_color};">{variance_label}</p>
     </div>
     """,
     unsafe_allow_html=True,
 )
-
-st.divider()
 
 # --- Variance overview tabs --------------------------------------------------
 st.subheader("Variance Overview")
