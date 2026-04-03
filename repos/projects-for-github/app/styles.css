@@ -1,0 +1,100 @@
+/* ── Custom properties ─────────────────────────────────────────────────── */
+:root {
+    --bg-sidebar:     #0d1117;
+    --bg-main:        #f4f6f9;
+    --bg-card:        #ffffff;
+    --bg-filter:      #f0f2f5;
+    --accent:         #1a6fa3;
+    --text-primary:   #111827;
+    --text-muted:     #6b7280;
+    --text-sidebar:   #ffffff;
+    --border:         #e5e7eb;
+    --sidebar-border: #1e293b;
+    --red:            #d62728;
+    --green:          #2ca02c;
+}
+
+/* ── Global typography ─────────────────────────────────────────────────── */
+html, body, [class*="css"] {
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif !important;
+    line-height: 1.5;
+}
+
+/* ── Main area background ──────────────────────────────────────────────── */
+.stApp {
+    background-color: var(--bg-main);
+}
+
+/* ── Sidebar ───────────────────────────────────────────────────────────── */
+[data-testid="stSidebar"] {
+    background-color: var(--bg-sidebar) !important;
+    border-right: 1px solid var(--sidebar-border);
+}
+
+[data-testid="stSidebar"] * {
+    color: var(--text-sidebar) !important;
+}
+
+/* Logo block separator */
+.logo-block {
+    border-bottom: 1px solid var(--sidebar-border);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* ── Section subheaders ────────────────────────────────────────────────── */
+h2 {
+    color: var(--accent) !important;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.3rem;
+}
+
+/* ── KPI cards ─────────────────────────────────────────────────────────── */
+.kpi-card {
+    background: var(--bg-card);
+    border-radius: 8px;
+    padding: 1rem;
+    border-top: 3px solid var(--accent);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 0.5rem;
+}
+.kpi-neutral { border-top-color: var(--accent); }
+.kpi-adverse { border-top-color: var(--red); }
+.kpi-favorable { border-top-color: var(--green); }
+
+.kpi-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted) !important;
+    margin-bottom: 0.25rem;
+}
+.kpi-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+.kpi-sub {
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+/* ── Inline filter bar ─────────────────────────────────────────────────── */
+div#filter-bar-sentinel + div[data-testid="stVerticalBlock"] {
+    background: var(--bg-filter);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ── Content card spacing ──────────────────────────────────────────────── */
+[data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {
+    margin-bottom: 1.5rem;
+}
+
+/* ── Pre-data logo centering ───────────────────────────────────────────── */
+.logo-center {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
