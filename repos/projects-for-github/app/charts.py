@@ -96,7 +96,7 @@ def variance_by_department_chart(dept_df: pd.DataFrame) -> go.Figure:
         margin=dict(l=20, r=80, t=50, b=40),
     )
 
-    return fig
+    return _apply_chart_theme(fig)
 
 
 def variance_trend_chart(month_df: pd.DataFrame) -> go.Figure:
@@ -191,7 +191,7 @@ def variance_trend_chart(month_df: pd.DataFrame) -> go.Figure:
         showlegend=False,
     )
 
-    return fig
+    return _apply_chart_theme(fig)
 
 
 def top_drivers_chart(
@@ -282,4 +282,4 @@ def top_drivers_chart(
         margin=dict(l=20, r=80, t=50, b=40),
     )
 
-    return fig
+    return _apply_chart_theme(fig)
