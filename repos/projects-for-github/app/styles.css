@@ -8,7 +8,7 @@
     --text-primary:   #111827;
     --text-muted:     #6b7280;
     --text-sidebar:   #ffffff;
-    --border:         #e5e7eb;
+    --border:         #e5e7eb;  /* used in Python _apply_chart_theme for chart grid lines */
     --sidebar-border: #1e293b;
     --red:            #d62728;
     --green:          #2ca02c;
@@ -31,7 +31,10 @@ html, body, [class*="css"] {
     border-right: 1px solid var(--sidebar-border);
 }
 
-[data-testid="stSidebar"] * {
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] div {
     color: var(--text-sidebar) !important;
 }
 
