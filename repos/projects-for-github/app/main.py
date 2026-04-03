@@ -126,8 +126,6 @@ df = add_variance_columns(raw_df)
 st.title("Budget Variance Analysis")
 st.markdown("*Where is the business over or under plan — and what should we do about it?*")
 
-st.divider()
-
 # Placeholder — filled after filters are applied so KPIs reflect the selection
 kpi_container = st.container()
 
@@ -262,8 +260,6 @@ with tab_cat:
     fig_cat.update_layout(title=dict(text="Variance by Category"))
     st.plotly_chart(fig_cat, use_container_width=True)
 
-st.divider()
-
 # --- Top drivers table -------------------------------------------------------
 st.subheader("Top Variance Drivers")
 
@@ -308,9 +304,7 @@ with col_fav:
     else:
         st.dataframe(_format_drivers(fav_display), hide_index=True, use_container_width=True)
 
-st.divider()
-
-# --- Analysis ----------------------------------------------------------------
+# --- Analysis & Recommended Actions ------------------------------------------
 st.subheader("Analysis")
 
 if commentary_mode in ("AI (Claude)", "Both") and not api_key:
@@ -321,8 +315,5 @@ if commentary_mode in ("AI (Claude)", "Both") and not api_key:
 
 st.markdown(summary)
 
-st.divider()
-
-# --- Recommended actions -----------------------------------------------------
-st.subheader("Recommended Actions")
+st.markdown("#### Recommended Actions")
 st.markdown(actions_markdown)
