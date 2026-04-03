@@ -20,7 +20,7 @@ st.set_page_config(page_title="Budget Variance Explainer", layout="wide")
 # ---------------------------------------------------------------------------
 # CSS injection — must come immediately after set_page_config, before sidebar
 # ---------------------------------------------------------------------------
-css = (Path(__file__).parent / "styles.css").read_text()
+css = (Path(__file__).parent / "styles.css").read_text(encoding="utf-8")
 st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
 SAMPLE_DATA_PATH = Path(__file__).parent.parent / "data" / "sample" / "budget_vs_actual.csv"
