@@ -10,11 +10,16 @@
 
 ### CSS Layer
 
-A single CSS string is stored in `app/styles.css` and injected once at app startup:
+A single CSS string is stored in `app/styles.css` and injected once in `main.py`. Injection placement: **immediately after `st.set_page_config` and before the `with st.sidebar:` block**, so sidebar styles apply even in the pre-data empty state.
 
 ```python
-css = Path("app/styles.css").read_text()
+st.set_page_config(page_title="Budget Variance Explainer", layout="wide")
+
+css = (Path(__file__).parent / "styles.css").read_text()
 st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
+with st.sidebar:
+    ...
 ```
 
 ### Color Palette
@@ -24,52 +29,79 @@ st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 | `--bg-sidebar` | `#0d1117` | Sidebar background |
 | `--bg-main` | `#f4f6f9` | Main area background |
 | `--bg-card` | `#ffffff` | Content card background |
-| `--accent` | `#1a6fa3` | Steel blue — links, active elements, subheader accents |
+| `--bg-filter` | `#f0f2f5` | Inline filter bar background |
+| `--accent` | `#1a6fa3` | Steel blue — links, active elements, subheader accents, logo |
 | `--text-primary` | `#111827` | Main body text, KPI values |
 | `--text-muted` | `#6b7280` | Labels, secondary text |
+| `--text-sidebar` | `#ffffff` | Sidebar text |
 | `--border` | `#e5e7eb` | Card borders, grid lines |
+| `--sidebar-border` | `#1e293b` | Sidebar right border, logo section bottom border |
 | `--red` | `#d62728` | Adverse variance |
 | `--green` | `#2ca02c` | Favorable variance |
 
 ### Sidebar
 
-- Background: `#0d1117`
-- Text: white
-- Right border: `1px solid #1e293b`
-- Logo/name treatment at top (see Section 3)
+- Background: `var(--bg-sidebar)` (`#0d1117`)
+- Text: `var(--text-sidebar)` (`#ffffff`)
+- Right border: `1px solid var(--sidebar-border)` (`#1e293b`)
+- Logo block at top has `border-bottom: 1px solid var(--sidebar-border)` and `padding-bottom: 1rem` to visually separate it from the Settings section — this is a CSS rule on the logo container, **not** `st.divider()`
 
 ### Main Area
 
-- Background: `#f4f6f9`
-- Content sections (KPI row, filter bar, chart tabs, drivers, analysis) styled as white cards with `border-radius: 8px`, `box-shadow: 0 1px 3px rgba(0,0,0,0.08)`, `padding: 1.25rem`
+- Background: `var(--bg-main)` (`#f4f6f9`)
+- Content sections styled as white cards: `background: var(--bg-card)`, `border-radius: 8px`, `box-shadow: 0 1px 3px rgba(0,0,0,0.08)`, `padding: 1.25rem 1.5rem`
 
 ### Typography
 
 - Font stack: `-apple-system, "Segoe UI", Arial, sans-serif`
-- Line height: `1.5` (tighter than Streamlit default)
-- Section subheaders: `#1a6fa3` accent color with a `2px solid` bottom border
+- Line height: `1.5`
+- Section subheaders: `color: var(--accent)` with `border-bottom: 2px solid var(--accent)`, `padding-bottom: 0.3rem`
 
 ### KPI Cards
 
-Replace current inline HTML `<div>` blocks with a consistent styled pattern:
-- Label: `0.8rem`, `#6b7280`, uppercase, letter-spaced
-- Value: `1.75rem`, `#111827`, `font-weight: 700`
-- Variance value/label: colored `#d62728` (adverse) or `#2ca02c` (favorable)
-- Card border-top: `3px solid` in the variance color (red/green) for the two variance KPIs; `3px solid #1a6fa3` for the budget and actual KPIs
+All four KPI cards (Total Budget, Total Actual, Net Variance $, Net Variance %) use the **same HTML div structure**. The existing `st.metric` calls for budget/actual are replaced. The existing inline HTML for variance KPIs is replaced with this canonical template:
+
+```html
+<div class="kpi-card kpi-{modifier}">
+  <p class="kpi-label">{LABEL}</p>
+  <p class="kpi-value" style="color: {value_color};">{VALUE}</p>
+  <p class="kpi-sub" style="color: {sub_color};">{SUBLABEL}</p>
+</div>
+```
+
+CSS for `.kpi-card`:
+- `background: var(--bg-card)`
+- `border-radius: 8px`
+- `padding: 1rem`
+- `.kpi-label`: `font-size: 0.75rem`, `text-transform: uppercase`, `letter-spacing: 0.05em`, `color: var(--text-muted)`
+- `.kpi-value`: `font-size: 1.75rem`, `font-weight: 700` — note: the existing code uses `1.6rem` for variance cards; this spec standardises all four at `1.75rem`
+- `.kpi-sub`: `font-size: 0.8rem`
+
+The `modifier` class controls the `border-top: 3px solid` color:
+- `.kpi-neutral` → `border-top-color: var(--accent)` (`#1a6fa3`) — used for Total Budget and Total Actual cards
+- `.kpi-adverse` → `border-top-color: var(--red)` (`#d62728`) — used for Net Variance cards when over budget
+- `.kpi-favorable` → `border-top-color: var(--green)` (`#2ca02c`) — used for Net Variance cards when under budget
 
 ### Dividers
 
-All `st.divider()` calls removed. Visual separation achieved by card spacing (`margin-bottom: 1.5rem` between card sections).
+All `st.divider()` calls removed. Visual separation achieved by card margins (`margin-bottom: 1.5rem`). The sidebar logo section uses a CSS `border-bottom` instead of `st.divider()` (see Sidebar above).
 
 ### Plotly Chart Theme
 
-A shared `_apply_chart_theme(fig)` function in `charts.py` applied to all three chart functions:
-- `plot_bgcolor`: `#ffffff`
-- `paper_bgcolor`: `#ffffff`
-- Grid lines: `#e5e7eb`
-- Zero-line: `#9ca3af`, width `1`
-- Font family: matches app font stack
-- Title font size: `14`, color `#111827`
+A private `_apply_chart_theme(fig: go.Figure) -> go.Figure` function in `charts.py`. The function **mutates `fig` in-place via `fig.update_layout(...)` and then returns `fig`** — consistent with the existing pattern in all three chart functions. It sets only shared properties; individual chart functions may still call `update_layout` for chart-specific settings (margins, `showlegend`, etc.) either before or after calling `_apply_chart_theme`.
+
+Properties set by `_apply_chart_theme`:
+```python
+fig.update_layout(
+    plot_bgcolor="#ffffff",
+    paper_bgcolor="#ffffff",
+    font=dict(family='-apple-system, "Segoe UI", Arial, sans-serif', color="#111827"),
+    title=dict(font=dict(size=14, color="#111827")),
+    xaxis=dict(gridcolor="#e5e7eb", zerolinecolor="#9ca3af", zerolinewidth=1),
+    yaxis=dict(gridcolor="#e5e7eb", zerolinecolor="#9ca3af", zerolinewidth=1),
+)
+return fig
+```
 
 ---
 
@@ -78,43 +110,59 @@ A shared `_apply_chart_theme(fig)` function in `charts.py` applied to all three 
 ### Sidebar (settings only)
 
 ```
-[Logo + Name]
-──────────────
-Settings
+[Logo + Name treatment]   ← replaces st.header("Settings")
+──────────────────────────  ← CSS border-bottom on logo container, not st.divider()
+Settings                  ← st.subheader("Settings") or st.markdown
   Data source: [radio]
   [File uploader — conditional]
-──────────────
+──────────────────────────  ← st.divider() KEPT here (within settings, not a page section divider)
   Commentary mode: [selectbox]
   [API key field — conditional]
 ```
 
-Filters are removed from the sidebar entirely.
+Note: `st.header("Settings")` at the top of the existing sidebar block is **replaced** by the logo HTML. The "Settings" label becomes `st.markdown("**Settings**")` or `st.subheader("Settings")` below the logo separator.
+
+The single `st.divider()` between data source and commentary mode sections **within the sidebar** is kept — the "remove dividers" rule applies to the main page only.
 
 ### Main Area — Pre-data State
 
-Centered layout:
-- Logo mark (large, ~48px)
-- App name + tagline
-- Styled `st.info` box with upload instructions and required column names
-- No other content
+Centered layout using `st.columns([1, 2, 1])` with all content rendered inside the middle column. Content:
+- Logo mark (large, ~48px, same SVG as sidebar but larger)
+- `st.title("Budget Variance Explainer")` — note: the loaded state uses "Budget Variance Analysis"; the empty state uses the full product name
+- Italic tagline: `st.markdown("*Where is the business over or under plan — and what should we do about it?*")`
+- `st.info(...)` block with upload instructions and required column names
 
 ### Main Area — Loaded State
 
 Sections in order:
 
 1. **Header strip**
-   - App name (`st.title`) + subtitle (`st.markdown` italic)
-   - No divider below — card spacing handles separation
+   - `st.title("Budget Variance Analysis")`
+   - `st.markdown("*Where is the business over or under plan — and what should we do about it?*")`
+   - No divider below
 
 2. **KPI Row**
    - `st.columns(4)`: Total Budget | Total Actual | Net Variance ($) | Net Variance (%)
-   - All four as styled card divs (replacing current mix of `st.metric` and raw HTML)
+   - All four rendered as styled HTML divs using the canonical KPI card template (Section 1)
 
 3. **Inline Filter Bar**
-   - A light-grey container (`background: #f0f2f5`, `border-radius: 8px`, `padding: 0.75rem 1rem`)
-   - Label: "Filters" in small muted text
-   - Two columns: Department multiselect | Month multiselect
-   - Positioned between KPI row and charts — visually scoped to "data shown below"
+   - Implementation technique: inject a sentinel `<div>` with a known `id` via `st.markdown`, then use a CSS adjacent-sibling selector to style the Streamlit block that follows it:
+     ```python
+     st.markdown('<div id="filter-bar-sentinel"></div>', unsafe_allow_html=True)
+     ```
+     ```css
+     /* styles.css */
+     div#filter-bar-sentinel + div[data-testid="stVerticalBlock"] {
+         background: var(--bg-filter);
+         border-radius: 8px;
+         padding: 0.75rem 1rem;
+     }
+     ```
+   - After the sentinel, render `st.markdown("**Filters**")` (small muted label) followed by `st.columns(2)` containing the two multiselects. These all fall inside the targeted `stVerticalBlock` and inherit the styled background.
+   - Label: small muted text "Filters" above the two columns
+   - Left column: Department multiselect
+   - Right column: Month multiselect
+   - **Single-month behavior preserved**: if only one month exists in the data, the month multiselect is suppressed and `selected_months = all_months` as in the existing code
 
 4. **Variance Overview**
    - `st.subheader("Variance Overview")`
@@ -124,12 +172,13 @@ Sections in order:
 5. **Top Variance Drivers**
    - `st.subheader("Top Variance Drivers")`
    - Chart above
-   - Adverse / Favorable tables below in two columns (restyled dataframes)
+   - Adverse / Favorable tables below in two columns
+   - "Restyled dataframes": the tables inherit the card white background via CSS. No column coloring or row highlighting is added — the only change is background color consistency with the rest of the page
 
 6. **Analysis**
    - Single `st.subheader("Analysis")`
    - Summary text (rule-based or AI)
-   - `#### Recommended Actions` heading (markdown, not a second `st.subheader`)
+   - `#### Recommended Actions` heading (markdown h4, not a second `st.subheader`)
    - Bulleted action list
 
 ### What Changes
@@ -137,24 +186,51 @@ Sections in order:
 | Before | After |
 |---|---|
 | Filters in sidebar, below settings | Filters inline between KPIs and charts |
-| `st.divider()` throughout | Removed; card spacing provides separation |
-| Two separate subheaders for Analysis + Actions | One subheader, Actions as inner heading |
-| Plain `st.info` empty state | Styled centered empty state with logo |
-| `st.metric` for budget/actual KPIs, raw HTML for variance KPIs | Consistent styled HTML for all 4 KPIs |
+| `st.divider()` on main page | Removed from main page; card spacing provides separation |
+| `st.divider()` in sidebar | Kept within sidebar settings sections |
+| Two separate subheaders for Analysis + Actions | One subheader, Actions as inner `####` heading |
+| Plain `st.info` empty state | Styled centered empty state with logo, `st.columns([1,2,1])` |
+| `st.metric` for budget/actual KPIs, inline HTML for variance KPIs | Consistent styled HTML for all 4 KPIs at `1.75rem` |
+| `st.header("Settings")` at sidebar top | Replaced by logo treatment; "Settings" label below logo separator |
 
 ---
 
 ## 3. Logo / Name Treatment
 
-Location: top of sidebar, above "Settings" label.
+### Visual Structure
 
-Implementation: inline SVG + styled text via `st.markdown(unsafe_allow_html=True)`.
+Horizontal layout: SVG bars on the left, two-line text block on the right. Implemented with `display: flex; align-items: center; gap: 10px`.
 
-Visual: three vertical bars (heights 60%, 100%, 75%) in `#1a6fa3` steel blue, ~24px tall. Followed by two-line text block:
-- Line 1: `Budget Variance` — white, `font-size: 1rem`, `font-weight: 700`
-- Line 2: `Explainer` — `#1a6fa3`, `font-size: 0.85rem`, `font-weight: 400`
+### SVG Specification (sidebar size, ~24px tall)
 
-Same logo mark (smaller, ~20px) appears in the pre-data empty state centered on the main area.
+```
+viewBox: "0 0 24 24"
+Three vertical bars, bottom-aligned, all width 5px, color #1a6fa3:
+  Bar 1 (left):   x=0,  height=14px (58%), y=10
+  Bar 2 (center): x=9,  height=24px (100%), y=0
+  Bar 3 (right):  x=18, height=18px (75%), y=6
+Gap between bars: 4px (achieved by x positions: 0, 9, 18)
+```
+
+### Text Block
+
+- Line 1: `Budget Variance` — `color: #ffffff`, `font-size: 1rem`, `font-weight: 700`
+- Line 2: `Explainer` — `color: #1a6fa3`, `font-size: 0.85rem`, `font-weight: 400`
+
+### Pre-data Empty State (large version)
+
+Same SVG scaled to 48px tall. Explicit coordinates (all sidebar values ×2):
+
+```
+viewBox: "0 0 48 48"
+Three vertical bars, bottom-aligned, all width 10px, color #1a6fa3:
+  Bar 1 (left):   x=0,  height=28px, y=20
+  Bar 2 (center): x=18, height=48px, y=0
+  Bar 3 (right):  x=36, height=36px, y=12
+Gap between bars: 8px (x positions: 0, 18, 36)
+```
+
+Centered above the title using `st.markdown` with `text-align: center` on the SVG wrapper.
 
 ---
 
@@ -162,10 +238,11 @@ Same logo mark (smaller, ~20px) appears in the pre-data empty state centered on 
 
 | Change | File | Detail |
 |---|---|---|
-| New CSS file | `app/styles.css` | Full CSS string; loaded and injected once in `main.py` |
-| Shared chart theme | `app/charts.py` | Private `_apply_chart_theme(fig) -> go.Figure` called by all three chart functions |
-| Filter bar moved | `app/main.py` | Filters extracted from sidebar into a clearly commented `# --- Inline filters ---` section in the main body |
-| Logo injected | `app/main.py` | Sidebar logo block injected in the `with st.sidebar:` block at top |
+| New CSS file | `app/styles.css` | Full CSS string; loaded and injected once in `main.py` immediately after `st.set_page_config` |
+| Shared chart theme | `app/charts.py` | Private `_apply_chart_theme(fig) -> go.Figure`; mutates in-place, returns fig; called at end of all three chart functions |
+| Filter bar moved | `app/main.py` | Filters extracted from sidebar into `# --- Inline filters ---` section in main body |
+| Logo injected | `app/main.py` | Sidebar logo block at top of `with st.sidebar:`, replacing `st.header("Settings")` |
+| KPI cards unified | `app/main.py` | All four KPIs use the canonical HTML div template; `st.metric` calls removed |
 
 No new modules. No changes to `calculations.py`, `validation.py`, or `commentary.py`.
 
@@ -178,3 +255,4 @@ No new modules. No changes to `calculations.py`, `validation.py`, or `commentary
 - Authentication
 - Deployment configuration
 - Any changes to data processing logic
+- Column coloring or row highlighting in variance driver tables
