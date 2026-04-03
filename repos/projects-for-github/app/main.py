@@ -29,8 +29,25 @@ SAMPLE_DATA_PATH = Path(__file__).parent.parent / "data" / "sample" / "budget_vs
 # Sidebar
 # ---------------------------------------------------------------------------
 with st.sidebar:
-    st.header("Settings")
+    # --- Logo ---
+    st.markdown(
+        """
+        <div class="logo-block" style="display:flex;align-items:center;gap:10px;padding-top:0.5rem;">
+            <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0"  y="10" width="5" height="14" fill="#1a6fa3"/>
+                <rect x="9"  y="0"  width="5" height="24" fill="#1a6fa3"/>
+                <rect x="18" y="6"  width="5" height="18" fill="#1a6fa3"/>
+            </svg>
+            <div>
+                <div style="color:#ffffff;font-size:1rem;font-weight:700;line-height:1.2;">Budget Variance</div>
+                <div style="color:#1a6fa3;font-size:0.85rem;font-weight:400;">Explainer</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
+    st.markdown("**Settings**")
     data_source = st.radio("Data source", ["Upload CSV", "Use Sample Data"])
 
     uploaded_file = None
