@@ -79,14 +79,28 @@ elif uploaded_file is not None:
 # Pre-data state
 # ---------------------------------------------------------------------------
 if raw_df is None:
-    st.title("Budget Variance Explainer")
-    st.markdown(
-        "*Where is the business over or under plan — and what should we do about it?*"
-    )
-    st.info(
-        "Upload a CSV file or select **Use Sample Data** in the sidebar to get started.\n\n"
-        "Your file must contain the columns: **month, department, category, budget, actual**."
-    )
+    _, col_center, _ = st.columns([1, 2, 1])
+    with col_center:
+        st.markdown(
+            """
+            <div class="logo-center">
+                <svg viewBox="0 0 48 48" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0"  y="20" width="10" height="28" fill="#1a6fa3"/>
+                    <rect x="18" y="0"  width="10" height="48" fill="#1a6fa3"/>
+                    <rect x="36" y="12" width="10" height="36" fill="#1a6fa3"/>
+                </svg>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.title("Budget Variance Explainer")
+        st.markdown(
+            "*Where is the business over or under plan — and what should we do about it?*"
+        )
+        st.info(
+            "Upload a CSV file or select **Use Sample Data** in the sidebar to get started.\n\n"
+            "Your file must contain the columns: **month, department, category, budget, actual**."
+        )
     st.stop()
 
 # ---------------------------------------------------------------------------
