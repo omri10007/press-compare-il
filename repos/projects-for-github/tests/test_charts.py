@@ -36,4 +36,4 @@ def test_apply_chart_theme_sets_zeroline():
 def test_apply_chart_theme_sets_font():
     fig = go.Figure()
     _apply_chart_theme(fig)
-    assert "#111827" in fig.layout.font.color
+    assert fig.layout.font.color == "#111827"
