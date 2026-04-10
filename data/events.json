@@ -1,0 +1,128 @@
+[
+  {
+    "id": "ceasefire-talks-2024",
+    "title": "Ceasefire Negotiations in Gaza",
+    "date": "2024-11-15",
+    "summary": "Indirect ceasefire negotiations between Israel and Hamas resumed in Qatar, mediated by the US, Egypt, and Qatar.",
+    "sources": [
+      {
+        "source_name": "Haaretz",
+        "article_title": "Qatar Hosts New Round of Gaza Ceasefire Talks",
+        "snippet": "Senior officials from both sides arrived in Doha for indirect talks aimed at securing a temporary halt to fighting and a hostage-prisoner exchange.",
+        "url": "https://www.haaretz.com",
+        "key_points": [
+          "Talks held in Doha with US, Egypt, Qatar as mediators",
+          "Hostage-prisoner exchange central to deal",
+          "No breakthrough yet — gaps remain on day-after governance"
+        ],
+        "notes": "Haaretz emphasizes diplomatic complexity and internal Israeli disagreements."
+      },
+      {
+        "source_name": "Ynet",
+        "article_title": "Negotiations Resume: Optimism Rises After Doha Meeting",
+        "snippet": "Israeli officials expressed cautious optimism after a day of talks, with a framework deal reportedly closer than in previous rounds.",
+        "url": "https://www.ynet.co.il",
+        "key_points": [
+          "Israeli officials cautiously optimistic",
+          "Framework deal reportedly closer",
+          "Hamas position on permanent ceasefire still a sticking point"
+        ],
+        "notes": "Ynet leads with Israeli government perspective and security angle."
+      },
+      {
+        "source_name": "Times of Israel",
+        "article_title": "Gaza Ceasefire Talks Resume Amid Pressure From Washington",
+        "snippet": "The Biden administration pushed hard for a deal before the transition of power, adding urgency to this round of negotiations in Doha.",
+        "url": "https://www.timesofisrael.com",
+        "key_points": [
+          "Strong US pressure before power transition",
+          "Talks focus on 6-week initial phase",
+          "Families of hostages hold vigil outside prime minister's office"
+        ],
+        "notes": "Times of Israel contextualizes the US political timeline and family pressure."
+      }
+    ]
+  },
+  {
+    "id": "high-court-judicial-reform",
+    "title": "Supreme Court Rules on Judicial Reform Law",
+    "date": "2024-01-01",
+    "summary": "Israel's Supreme Court struck down a key law that would have restricted judicial review of government decisions, ruling it unconstitutional.",
+    "sources": [
+      {
+        "source_name": "Haaretz",
+        "article_title": "Supreme Court Strikes Down Reasonableness Law in Historic Ruling",
+        "snippet": "In a 8-7 majority, the court ruled that the Knesset cannot strip the judiciary of its power to review government decisions for reasonableness.",
+        "url": "https://www.haaretz.com",
+        "key_points": [
+          "8-7 majority struck down the law",
+          "Court asserted power to review Basic Laws",
+          "Government called ruling an 'overreach'"
+        ]
+      },
+      {
+        "source_name": "Ynet",
+        "article_title": "High Court Blocks Reasonableness Law — Coalition Furious",
+        "snippet": "Coalition ministers slammed the ruling, with some calling for steps to override the decision. Opposition celebrated the ruling as a victory for democracy.",
+        "url": "https://www.ynet.co.il",
+        "key_points": [
+          "Coalition vows to respond legislatively",
+          "Opposition celebrates ruling",
+          "Demonstrations outside court building"
+        ]
+      },
+      {
+        "source_name": "Times of Israel",
+        "article_title": "In Landmark Decision, Supreme Court Nullifies Judicial Reform Legislation",
+        "snippet": "The court's decision is the first time it has ever struck down a Basic Law, setting a new precedent for constitutional review in Israel.",
+        "url": "https://www.timesofisrael.com",
+        "key_points": [
+          "First time a Basic Law was nullified",
+          "Sets new constitutional precedent",
+          "Legal scholars divided on implications"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tel-aviv-startup-ipo",
+    "title": "Israeli AI Startup Reaches $1B Valuation",
+    "date": "2024-09-03",
+    "summary": "Tel Aviv-based AI security startup crossed the unicorn threshold after a $200M funding round led by US investors.",
+    "sources": [
+      {
+        "source_name": "Calcalist",
+        "article_title": "Another Israeli Unicorn: AI Firm Reaches $1B Valuation",
+        "snippet": "The company, which develops AI-powered threat detection for enterprise networks, said it will use the funds to expand into the US and European markets.",
+        "url": "https://www.calcalist.co.il",
+        "key_points": [
+          "$200M Series C at $1B valuation",
+          "Expansion into US and European markets planned",
+          "100 new hires expected in 2025"
+        ]
+      },
+      {
+        "source_name": "Globes",
+        "article_title": "Cybersecurity Unicorn Born Despite War: Investors Bet on Israeli AI",
+        "snippet": "The funding round signals continued investor confidence in Israeli tech despite the ongoing conflict, with US venture capital leading the round.",
+        "url": "https://en.globes.co.il",
+        "key_points": [
+          "Signals investor confidence during wartime",
+          "US VC led the round",
+          "IPO possible within 18-24 months"
+        ]
+      },
+      {
+        "source_name": "Times of Israel",
+        "article_title": "War Has Not Stopped Israeli Startups: New Unicorn Emerges in AI Security",
+        "snippet": "Despite talent mobilization and economic uncertainty, Israel's startup ecosystem continues to attract global capital, with this deal among the largest of 2024.",
+        "url": "https://www.timesofisrael.com",
+        "key_points": [
+          "One of the largest Israeli funding rounds of 2024",
+          "Talent mobilization was a challenge the company navigated",
+          "Founders cite 8200 alumni network as key advantage"
+        ]
+      }
+    ]
+  }
+]
