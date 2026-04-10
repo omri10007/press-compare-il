@@ -7,14 +7,16 @@ export default function SourceCard({ source }: { source: Source }) {
         <span className="text-sm font-semibold text-blue-700 uppercase tracking-wide">
           {source.source_name}
         </span>
-        <a
-          href={source.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-gray-400 hover:text-blue-500 transition-colors"
-        >
-          Read original ↗
-        </a>
+        {source.url && (
+          <a
+            href={source.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-gray-400 hover:text-blue-500 transition-colors"
+          >
+            Read original ↗
+          </a>
+        )}
       </div>
 
       <p className="text-base font-medium text-gray-900">{source.article_title}</p>

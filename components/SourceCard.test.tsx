@@ -30,4 +30,14 @@ describe('SourceCard', () => {
     render(<SourceCard source={{ ...mockSource, key_points: [] }} />);
     expect(screen.queryByRole('list')).not.toBeInTheDocument();
   });
+
+  it('renders read original link when url is present', () => {
+    render(<SourceCard source={mockSource} />);
+    expect(screen.getByRole('link', { name: /read original/i })).toHaveAttribute('href', 'https://www.haaretz.com');
+  });
+
+  it('does not render read original link when url is empty', () => {
+    render(<SourceCard source={{ ...mockSource, url: '' }} />);
+    expect(screen.queryByRole('link', { name: /read original/i })).not.toBeInTheDocument();
+  });
 });
